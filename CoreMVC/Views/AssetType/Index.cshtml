@@ -1,0 +1,103 @@
+﻿@model CoreMVC.Models.AssetType
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>ประเภทอุปกรณ์</h1>
+
+<p>
+   
+</p>
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            <th>
+                AssetType Name
+            </th>
+            <th> 
+                <a href="#" class="btn btn-primary" onclick="AddEditAssetType(0)"><i class="icon-plus"></i> Add New</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(ViewBag.AssetTypeList != null)
+        {
+            foreach(var item in ViewBag.AssetTypeList)
+            {
+        <tr id="row_@item.AssetTypeId">
+            <td>@item.AssetTypeName</td>
+            <td>
+                <a href="#" class="btn btn-success" onclick="AddEditAssetType(@item.AssetTypeId)"><i class="icon-edit"></i>Edit</a>            
+                <a href="#" class="btn btn-danger" onclick="ConfirmDelete(@item.AssetTypeId)"><i class="icon-trash"></i>Delete</a>
+            </td>
+        </tr>
+            }
+        }
+    </tbody>
+</table>
+<input type="hidden" id="hiddenAssetTypeId" />
+
+<div class="modal fade" id="dataModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">AddEdit Asset Type</h3>
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+            </div>
+            <div class="modal-body" id="dataModalBodyDiv1">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">                
+                <h3 class="modal-title">Delete AssetType</h3>
+                <a href="#" class="close" data-dismiss="modal">&times;</a>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure ? You want to delete this. </h4>
+                <div style="text-align:center;display:none" id="loaderDiv">
+                    <img src="~/Content/InternetSlowdown_Day.gif" width="150" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">Cancel</a>
+                <a href="#" class="btn btn-success" onclick="DeleteAssetType()">Confirm</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var AddEditAssetType = function (assetTypeId) {
+        var url = "/AssetType/AddEditAssetType?AssetTypeId=" + assetTypeId;
+        $("#dataModalBodyDiv1").load(url, function () {
+            $("#dataModal").modal("show");
+        })
+        }
+
+    var ConfirmDelete = function (AssetTypeId) {
+        $("#hiddenAssetTypeId").val(AssetTypeId);
+        $("#deleteModal").modal('show');
+    }
+
+    var DeleteAssetType = function () {
+        var astId = $("#hiddenAssetTypeId").val();
+        $("#loaderDiv").show();        
+        $.ajax({
+            type: "POST",
+            url: "/AssetType/DeleteAssetType",
+            data: { AssetTypeId: astId },
+            success: function (result) {
+                $("#loaderDiv").hide();
+                $("#deleteModal").modal("hide");
+                $("#row_" + astId).remove();
+            }
+        })
+    }
+</script>

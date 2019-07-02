@@ -1,0 +1,44 @@
+﻿@model CoreMVC.Models.AssetType
+
+<div>
+    <form id="myForm">
+        @Html.HiddenFor(m => m.AssetTypeId)
+        <div class="form-group">
+            @Html.TextBoxFor(model => model.AssetTypeName, new { @class = "form-control", @placeholder = "Asset Type Name" })
+        </div>
+        
+            <a href="#" id="btnSubmit" class="btn btn-success btn-block">
+                @if (Model.AssetTypeId > 0)
+                {<span>Update</span> }
+                else
+                {<span>Save</span>}
+            </a>
+        
+    </form>
+    <div style="text-align:center;display:none" id="loaderDiv">
+        <img src="~/Content/InternetSlowdown_Day.gif" width="150" />
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#btnSubmit").click(function () {
+            $("#loaderDiv").show();
+            var myformdata = $("#myForm").serialize();
+
+            $.ajax({
+                type: "POST",
+                url: "/AssetType/Index",
+                data: myformdata,
+                success: function () {
+                    $("#loaderDiv").hide();
+                    $("#dataModal").modal("hide");
+                    window.location.href = "/AssetType/Index";
+                }
+            })
+        })
+    })
+
+
+</script>
